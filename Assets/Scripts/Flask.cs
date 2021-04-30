@@ -7,6 +7,9 @@ public class Flask : MonoBehaviour
     [SerializeField] private Vector2[] allCells;
     [SerializeField] private List<Ball> balls;
     [SerializeField] private AudioSource clickSound;
+    private bool fullWithSameColors;
+
+    public bool FullWithSameColors => fullWithSameColors;
 
     private ParticleSystem glow;
 
@@ -46,24 +49,6 @@ public class Flask : MonoBehaviour
         }
     }
 
-    //неоптимизировано
-    public bool IsFullAndSameColors()
-    {
-        if (!IsFull)
-            return false;
-
-        Color color = balls[0].Color;
-
-        foreach (var item in balls)
-            if (item.Color != color)
-                return false;
-
-        var m = glow.main;
-        m.startColor = color;
-        glow.gameObject.SetActive(true);
-        return true;
-    }
-
     public bool TryTake(out Ball ball)
     {
         if (balls.Count == 0)
@@ -79,6 +64,7 @@ public class Flask : MonoBehaviour
             ball.Take();
             ball.Move(highPoint);
             clickSound.Play();
+            fullWithSameColors = false;
             return true;
         }
     }
@@ -94,6 +80,8 @@ public class Flask : MonoBehaviour
             balls.Add(ball);
             ball.Put();
             ball.Move(allCells[balls.Count - 1]);
+            if(IsFullAndSameColors())
+                fullWithSameColors = true;
             return true;
         }
     }
@@ -102,5 +90,22 @@ public class Flask : MonoBehaviour
     {
         balls.Add(ball);
         ball.transform.position = allCells[balls.Count - 1];
+    }
+
+    private bool IsFullAndSameColors()
+    {
+        if (!IsFull)
+            return false;
+
+        Color color = balls[0].Color;
+
+        foreach (var item in balls)
+            if (item.Color != color)
+                return false;
+
+        var m = glow.main;
+        m.startColor = color;
+        glow.gameObject.SetActive(true);
+        return true;
     }
 }

@@ -42,7 +42,7 @@ public class GameLevel : MonoBehaviour
         int collected = 0;
         //неоптимизировано
         foreach (var item in flasks)
-            if (item.IsFullAndSameColors())
+            if (item.FullWithSameColors)
                 collected++;
         return collected == colors.Length;
     }
@@ -57,7 +57,7 @@ public class GameLevel : MonoBehaviour
         else if (flask.TryPut(takenBall))
         {
             ActiveCollider();
-            takenBall.Arrived.AddListener(() => 
+            takenBall.Arrived.AddListener(() =>
             {
                 takenBall.Arrived.RemoveAllListeners();
                 takenBall = null;
